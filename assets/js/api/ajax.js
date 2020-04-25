@@ -5,6 +5,10 @@ export function api_get(url) {
     return axios.get(url);
 }
 
+export function channel_list(data) {
+    return axios.get('/api/channel');
+}
+
 export function channel_post(data) {
     return axios.post('/api/channel', data);
 }

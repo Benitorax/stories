@@ -15,6 +15,13 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label for="name" class="col-sm-3 col-form-label font-weight-bold">Nombre de joueurs maximum</label>
+            <div class="col-sm-9">
+                <input type="number" class="form-control" id="name" v-model="channel.usersMax" min="2" max="11">
+            </div>
+        </div>
+
         <fieldset class="form-group mt-4">
             <div class="row">
                 <legend class="col-sm-3 col-form-label font-weight-bold">Mot de passe</legend>
@@ -61,15 +68,14 @@
 </template>
 
 <script>
-import Button from './Button';
 import { checkChannelForm } from '../form/checkForm';
 
 export default {
-    components: { Button },
     data() {
         return {
             channel: {
                 name: '',
+                usersMax: 10,
                 hasPassword: 1,
                 password: '',
                 isPublic: 1,

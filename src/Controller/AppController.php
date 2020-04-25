@@ -28,7 +28,7 @@ class AppController extends AbstractController
     public function getAllChannels(ChannelRepository $channelRepository, SerializerInterface $serializer)
     {
         $channels = $channelRepository->findAllPublic();
-        return $this->json($serializer->serialize($channels, 'json'));
+        return $this->json($serializer->serialize($channels, 'json', ['groups' => 'frontend']));
     }
 
     /**

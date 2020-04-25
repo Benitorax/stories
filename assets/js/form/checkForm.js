@@ -9,6 +9,14 @@ export function checkChannelForm(channel) {
         errors.push('Le nom doit avoir moins de 30 caractères');
     }
 
+    if(!channel.usersMax) {
+        errors.push('Veuillez saisir le nombre de joueurs maximum');
+    } else if(channel.usersMax < 2) {
+        errors.push('Le nombre de joueurs maximum doit être plus de 1');
+    } else if(channel.usersMax > 11) {
+        errors.push('Le nombre de joueurs maximum doit être inférieur à 11');
+    }
+
     if(!channel.hasPassword) {
       errors.push('Sélectionnez "non" pour ne pas saisir de mot de passe');
     } 

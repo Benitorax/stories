@@ -1,8 +1,6 @@
 <template>
     <div>
-        <h2>A propos</h2>
-
-        <div>A compléter</div>
+        <h2>Channel Connect</h2>
     </div>
 </template>
     

@@ -1,59 +1,66 @@
-import { channel_post } from '../../api/ajax'
+import { channel_post, channel_list } from '../../api/ajax';
 
 // initial state
 const state = {
-  allChannels: [],
-  channel: {}
+    channels: [],
+    channel: {}
 };
 
 // getters
 const getters = {
-  allChannels: state => {
-    return state.allChannels;
-  },
-  channel: state => {
-    return state.channel;
-  }
+    channels: state => {
+        return state.channels;
+    },
+    channel: state => {
+        return state.channel;
+    }
 };
 
 // actions
 const actions = {
-  fetchAllChannels({commit, state}) {
-
-  },
-  fetchChannel({commit, state}) {
-    return state.channel;
-  },
-  create({ commit, state }, channel) {
-    return channel_post(channel)
-    .then(response=>{
-      let channel = JSON.parse(response.data);
-      commit('setChannel', channel);
-    });
-  }
+    fetchChannels({commit, state}) {
+        return channel_list().then(response => {
+            let channels = JSON.parse(response.data);
+            console.log('inside action', channels);
+            commit('setChannels', channels);
+        });
+    },
+    fetchChannel({commit, state}) {
+        return state.channel;
+    },
+    create({ commit, state }, channel) {
+        return channel_post(channel)
+        .then(response=>{
+            let channel = JSON.parse(response.data);
+            commit('setChannel', channel);
+        });
+    }
 };
 
 // mutations
 const mutations = {
-  setAllChannels(state, channels) {
-    state.allChannels = channels;
-  },
-  setChannel(state, channel) {
-    state.channel = channel;
-  },
-  setUser(user) {
-    state.user = user;
-  },
-  decrementProductInventory (state, { id }) {
-    const product = state.all.find(product => product.id === id);
-    product.inventory--;
-  }
+    setChannels(state, channels) {
+        state.channels = channels;
+    },
+    setChannel(state, channel) {
+        state.channel = channel;
+    },
+    eraseChannel(state) {
+        state.channel = {};
+    },
+    setUser(user) {
+        state.user = user;
+    },
+    decrementProductInventory (state, { id }) {
+        const product = state.all.find(product => product.id === id);
+        product.inventory--;
+    }
 };
 
 export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations
+    namespaced: true,
+    state,
+    getters,
+    actions,
+    mutations
 }

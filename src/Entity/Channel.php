@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -36,15 +38,38 @@ class Channel
     private $isPublic;
 
     /**
-     * @ORM\Column(type="array")
-     * @Groups("frontend")
-     */
-    private $users = [];
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $password;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Groups("frontend")
+     */
+    private $usersMax;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups("frontend")
+     */
+    private $isFull = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="channel")
+     * @Groups("frontend")
+     */
+    private $users;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Groups("frontend")
+     */
+    private $UsersCount = 0;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?string
     {
@@ -82,18 +107,6 @@ class Channel
         return $this;
     }
 
-    public function getUsers(): ?array
-    {
-        return $this->users;
-    }
-
-    public function setUsers(array $users): self
-    {
-        $this->users = $users;
-
-        return $this;
-    }
-
     public function getName(): ?string
     {
         return $this->name;
@@ -114,6 +127,84 @@ class Channel
     public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUsersMax(): ?int
+    {
+        return $this->usersMax;
+    }
+
+    public function setUsersMax(int $usersMax): self
+    {
+        $this->usersMax = $usersMax;
+
+        return $this;
+    }
+
+    public function getIsFull(): ?bool
+    {
+        return $this->isFull;
+    }
+
+    public function setIsFull(bool $isFull): self
+    {
+        $this->isFull = $isFull;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->setChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->contains($user)) {
+            $this->users->removeElement($user);
+            // set the owning side to null (unless already changed)
+            if ($user->getChannel() === $this) {
+                $user->setChannel(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUsersCount(): ?int
+    {
+        return $this->UsersCount;
+    }
+
+    public function increaseCount(): self
+    {
+        $this->UsersCount++;
+        if($this->UsersCount < 0) $this->UsersCount = 0;
+        if($this->UsersCount == $this->usersMax) $this->setIsFUll(false);
+
+        return $this;
+    }
+
+    public function decreaseCount(): self
+    {
+        $this->UsersCount--;
+        if($this->UsersCount < 0) $this->UsersCount = 0;
+        if($this->isFull == true) $this->setIsFUll(false);
 
         return $this;
     }

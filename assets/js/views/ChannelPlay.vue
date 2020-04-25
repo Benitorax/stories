@@ -17,8 +17,11 @@ export default {
             channel: this.$store.getters['channel/channel'],
             user: this.$store.getters['user/user']
         };
+    },
+    beforeDestroy() {
+        this.$store.commit('user/eraseUser');
+        this.$store.commit('channel/eraseChannel');
     }
-    
 }
 </script>
 
