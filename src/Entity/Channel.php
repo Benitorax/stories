@@ -2,38 +2,39 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ChannelRepository")
  */
-class Channel
+class Channel implements UserInterface
 {
     /**
      * @ORM\Id()
      * @ORM\Column(type="string")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $name;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $hasPassword;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $isPublic;
 
@@ -44,27 +45,27 @@ class Channel
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $usersMax;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $isFull = false;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\User", mappedBy="channel")
-     * @Groups("frontend")
+     * @Groups("private")
      */
     private $users;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups("frontend")
+     * @Groups("public")
      */
-    private $UsersCount = 0;
+    private $usersCount = 0;
 
     public function __construct()
     {
@@ -167,6 +168,7 @@ class Channel
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
+            $this->increaseCount();
             $user->setChannel($this);
         }
 
@@ -177,6 +179,7 @@ class Channel
     {
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
+            $this->decreaseCount();
             // set the owning side to null (unless already changed)
             if ($user->getChannel() === $this) {
                 $user->setChannel(null);
@@ -188,24 +191,32 @@ class Channel
 
     public function getUsersCount(): ?int
     {
-        return $this->UsersCount;
+        return $this->usersCount;
     }
 
     public function increaseCount(): self
     {
-        $this->UsersCount++;
-        if($this->UsersCount < 0) $this->UsersCount = 0;
-        if($this->UsersCount == $this->usersMax) $this->setIsFUll(false);
+        $this->usersCount++;
+        if($this->usersCount < 0) $this->usersCount = 0;
+        if($this->usersCount == $this->usersMax) $this->setIsFUll(false);
 
         return $this;
     }
 
     public function decreaseCount(): self
     {
-        $this->UsersCount--;
-        if($this->UsersCount < 0) $this->UsersCount = 0;
+        $this->usersCount--;
+        if($this->usersCount < 0) $this->usersCount = 0;
         if($this->isFull == true) $this->setIsFUll(false);
 
         return $this;
     }
+
+    public function getRoles() {}
+
+    public function getSalt() {}
+
+    public function getUsername() {}
+
+    public function eraseCredentials() {}
 }

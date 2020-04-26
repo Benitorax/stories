@@ -14,25 +14,24 @@ class User implements UserInterface
     /**
      * @ORM\Id()
      * @ORM\Column(type="string")
-     * @Groups("frontend")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $username;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $points = 0;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups("frontend")
+     * @Groups("public")
      */
     private $isConnected = true;
 
@@ -41,6 +40,12 @@ class User implements UserInterface
      * @ORM\JoinColumn(nullable=false)
      */
     private $channel;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("play")
+     */
+    private $token;
 
     public function getId(): ?string
     {
@@ -102,6 +107,18 @@ class User implements UserInterface
     public function setChannel(?Channel $channel): self
     {
         $this->channel = $channel;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): self
+    {
+        $this->token = $token;
 
         return $this;
     }

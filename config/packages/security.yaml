@@ -3,6 +3,8 @@ security:
     encoders:
         App\Entity\User:
             algorithm: auto
+        App\Entity\Channel:
+            algorithm: auto
     
     providers:
         users_in_memory: { memory: null }

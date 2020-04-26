@@ -1,4 +1,4 @@
-import { channel_post, channel_list } from '../../api/ajax';
+import { channel_post, channel_list, channel_add_user, channel_check_password } from '../../api/ajax';
 
 // initial state
 const state = {
@@ -13,6 +13,9 @@ const getters = {
     },
     channel: state => {
         return state.channel;
+    },
+    channelById: (state) => (id) => {
+        return state.channels.find(channel => channel.id === id);
     }
 };
 
@@ -20,19 +23,47 @@ const getters = {
 const actions = {
     fetchChannels({commit, state}) {
         return channel_list().then(response => {
-            let channels = JSON.parse(response.data);
-            console.log('inside action', channels);
+            let channels = JSON.parse(response.data.channels);
             commit('setChannels', channels);
         });
     },
-    fetchChannel({commit, state}) {
-        return state.channel;
-    },
+    // fetchChannel({commit, state}) {
+    //     return state.channel;
+    // },
     create({ commit, state }, channel) {
         return channel_post(channel)
-        .then(response=>{
-            let channel = JSON.parse(response.data);
+        .then(response=> {
+            let channel = JSON.parse(response.data.channel);
+            let user = JSON.parse(response.data.user);
+
+            commit('user/setUser', user, { root: true });
             commit('setChannel', channel);
+            
+            return {user, channel};
+        });
+    },
+    addUser({ commit, state }, data) {
+        return channel_add_user(data)
+        .then(response => {
+            let user = JSON.parse(response.data.user);
+            let channel = JSON.parse(response.data.channel);
+            console.log('inside addUser', user, channel);
+            commit('user/setUser', user, { root: true });
+            commit('setChannel', channel);
+
+            return { user, channel};
+        });
+    },
+    checkPassword({ commit, state }, data) {
+        return channel_check_password(data)
+        .then(response => {
+            let user = JSON.parse(response.data.user);
+            let channel = JSON.parse(response.data.channel);
+
+            commit('user/setUser', user, { root: true });
+            commit('setChannel', channel);
+            
+            return { user, channel};
         });
     }
 };

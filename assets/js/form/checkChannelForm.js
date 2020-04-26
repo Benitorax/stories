@@ -1,4 +1,4 @@
-export function checkChannelForm(channel) {
+export default function checkChannelForm(channel) {
     let errors = [];
 
     if(!channel.name) {
@@ -23,7 +23,7 @@ export function checkChannelForm(channel) {
 
     if(channel.hasPassword === 1) {
         if(!channel.password) errors.push('Le mot de passe est requis');
-        else if(channel.password.length < 5) errors.push('Le mot de passe doit avoir plus de 5 caractères');
+        else if(channel.password.length < 4) errors.push('Le mot de passe doit avoir plus de 4 caractères');
         else if(channel.password.length > 20) errors.push('Le mot de passe doit avoir moins de 20 caractères');
     } 
 
@@ -34,7 +34,7 @@ export function checkChannelForm(channel) {
     if(!channel.username) {
         errors.push('Veuillez saisir votre nom de joueur');
     } else if(channel.username.length < 2) {
-        errors.push('Le nom de joueur doit avoir plus de 1 caractères');
+        errors.push('Le nom de joueur doit avoir plus de 1 caractère');
     } else if(channel.username.length > 15) {
         errors.push('Le nom de joueur doit avoir moins de 15 caractères');
     }

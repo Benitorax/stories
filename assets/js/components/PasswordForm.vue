@@ -1,6 +1,6 @@
 <template>
     <form @submit="checkForm" method="post" novalidate="true">
-        <h2>Rejoindre la partie {{ channel.name }}</h2>
+        <h2>Rejoindre la partie "{{ channel.name }}"</h2>
         <p v-if="errors.length" class="text-danger">
             <b>Veuillez corriger ces erreurs :</b>
             <ul>
@@ -14,25 +14,14 @@
                 <input type="password" class="form-control" id="password" v-model="password" :disabled="disabled == 1">
             </div>
         </div>
-        <hr v-if="hasPassword">
-        <div class="form-group row">
-            <label for="name" class="col-sm-3 col-form-label font-weight-bold">Nom de joueur</label>
-            <div class="col-sm-9">
-                <input type="text" class="form-control" id="name" v-model="username" :disabled="disabled == 1">
-            </div>
-        </div>
-
         <button class="mt-4 btn btn-lg btn-primary" :disabled="disabled == 1">Valider</button>
     </form>    
 </template>
 
 <script>
-import checkUserForm from '../form/checkUserForm';
-
 export default {
     data() {
         return {
-            username: '',
             password: '',
             disabled: 0,
             errors: []
@@ -49,20 +38,25 @@ export default {
     methods: {
         checkForm: function(e) {
             e.preventDefault();
-            this.errors = checkUserForm(this.username, this.hasPassword, this.password);
+            this.errors = [];
+            if(this.hasPassword == 1) {
+                if(!this.password) this.errors.push('Le mot de passe est requis');
+                else if(this.password.length < 4) this.errors.push('Le mot de passe doit avoir plus de 4 caractères');
+                else if(this.password.length > 20) this.errors.push('Le mot de passe doit avoir moins de 20 caractères');
+            } 
 
             if(!this.errors.length) {
                 this.disabled = 1;
-                this.$store.dispatch('channel/addUser', { channel: this.channel, username: this.username, password: this.password })
+                this.$store.dispatch('channel/checkPassword', { channel: this.channel, password: this.password })
                 .then(data => {
-                    console.log('inside UserForm', data);
+                    console.log('inside PasswordForm', data);
                     if(data.channel.id && data.user.username) {
                         this.$store.commit('message/setMessage', { type: 'success', text: 'Connexion à la partie ' + this.channel.name + ' réussie' });
                     }
                     this.disabled = 0;
                 })                
                 .catch((data) => {
-                    console.log('promise error inside userForm', data);
+                    console.log('promise error inside PasswordForm', data);
                     this.$store.commit('message/setMessage', { type: 'danger', text: 'Mot de passe incorrect' });
                     this.disabled = 0;
                 });

@@ -2,11 +2,7 @@ import ajax from '../../api/ajax'
 
 // initial state
 const state = {
-	user: {
-		id: null,
-		username: null,
-		points: null
-	}
+	user: {}
 };
 
 // getters

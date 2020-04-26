@@ -4,7 +4,6 @@ import ChannelCreate from './views/ChannelCreate';
 import ChannelView from './views/ChannelView';
 import ChannelPlay from './views/ChannelPlay';
 import ChannelList from './views/ChannelList';
-import ChannelConnect from './views/ChannelConnect';
 
 //Vue.use(Router);
 
@@ -26,7 +25,7 @@ export default new VueRouter({
             component: ChannelCreate
         },
         {
-            path: "/channel/:id/user/:userId",
+            path: "/channel/:id/user",
             name: "channel-play",
             component: ChannelPlay
         },
@@ -36,16 +35,9 @@ export default new VueRouter({
             component: ChannelList
         },
         {
-            path: "/channel/:id/connect",
-            name: "channel-connect",
-            component: ChannelConnect
-        },
-        {
             path: "/channel/:id/view",
             name: "channel-view",
             component: ChannelView
         },
-
-
     ]
 });

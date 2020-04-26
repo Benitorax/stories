@@ -7,7 +7,6 @@
             </ul>
         </p>
 
-
         <div class="form-group row">
             <label for="name" class="col-sm-3 col-form-label font-weight-bold">Nom</label>
             <div class="col-sm-9">
@@ -68,7 +67,7 @@
 </template>
 
 <script>
-import { checkChannelForm } from '../form/checkForm';
+import checkChannelForm from '../form/checkChannelForm';
 
 export default {
     data() {
@@ -88,21 +87,20 @@ export default {
     
     },
     methods: {
-        checkForm: async function(e) {
+        checkForm: function(e) {
             e.preventDefault();
             this.errors = checkChannelForm(this.channel);
 
             if(!this.errors.length) {
                 this.disabled = 1;
-                await this.$store.dispatch('channel/create', this.channel)
-                .then(() => {
-                    this.$store.dispatch('channel/fetchChannel').then((data) => {
-                        if(data.id) {
-                            this.$store.commit('user/setUser', { id: data.users[0].id, username: this.channel.username, points: 0 });
-                            this.$store.commit('message/setMessage', { type: 'success', text: 'Partie créée, connectez-vous à cette partie depuis un écran partagé.' });
-                            this.$router.push({ name: 'channel-play', params: {id: data.id, userId: data.users[0].id} });
-                        }
-                    });
+                this.$store.dispatch('channel/create', this.channel)
+                .then((data) => {
+                    console.log('inside ChannelForm', data);
+                    if(data.channel.id && data.user.username) {
+                        this.$store.commit('message/setMessage', { type: 'success', text: 'Partie créée, connectez-vous à cette partie depuis un écran partagé.' });
+                        this.$router.push({ name: 'channel-play', params: {id: data.channel.id} });
+                    }
+                
                     this.disabled = 0;
                 })                
                 .catch((data) => {

@@ -5,12 +5,20 @@ export function api_get(url) {
     return axios.get(url);
 }
 
-export function channel_list(data) {
+export function channel_list() {
     return axios.get('/api/channel');
 }
 
 export function channel_post(data) {
     return axios.post('/api/channel', data);
+}
+
+export function channel_add_user(data) {
+    return axios.post('/api/channel/'+ data.channel.id + '/user', data);
+}
+
+export function channel_check_password(data) {
+    return axios.post('/api/channel/'+ data.channel.id + '/check-password', {password: data.password});
 }
 
 //#################################################################

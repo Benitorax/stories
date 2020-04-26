@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Channel;
 use App\Entity\User;
 use App\Service\ChannelService;
 use App\Repository\ChannelRepository;
@@ -28,7 +29,9 @@ class AppController extends AbstractController
     public function getAllChannels(ChannelRepository $channelRepository, SerializerInterface $serializer)
     {
         $channels = $channelRepository->findAllPublic();
-        return $this->json($serializer->serialize($channels, 'json', ['groups' => 'frontend']));
+        return $this->json([
+            'channels' => $serializer->serialize($channels, 'json', ['groups' => 'public'])
+        ]);
     }
 
     /**
@@ -40,10 +43,61 @@ class AppController extends AbstractController
         /** stdclass */
         $data = json_decode($data);
 
-        $user = new User();
-        $channel = $channelService->createChannel($user, $data);
+        $data = $channelService->createChannel($data);
 
-        return $this->json($serializer->serialize($channel, 'json', ['groups' => 'frontend']));
+        return $this->json([
+            'user' => $serializer->serialize($data['user'], 'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $serializer->serialize($data['channel'], 'json', ['groups' => ['public']]),
+        ]);
+    }
+
+    /**
+     * @Route("/api/channel/{id}/check-password", name="api_channel_check_password", methods={"POST"})
+     */
+    public function checkPassword(Request $request, ChannelService $channelService, Channel $channel, SerializerInterface $serializer)
+    {
+        $data = $request->getContent();
+        /** stdclass */
+        $data = json_decode($data);
+
+        $user = $channelService->checkPassword($data->password, $channel);
+    
+        if(!$user) {
+            return $this->json([], 400);
+        }
+
+        return $this->json([
+            'user' => $serializer->serialize($user, 'json', ['groups' => ['public', 'private']]),
+            'channel' => $serializer->serialize($channel, 'json', ['groups' => ['public', 'private']])
+        ]);
     }
     
+    /**
+     * @Route("/api/channel/{id}/user", name="api_channel_user_add", methods={"POST"})
+     */
+    public function addUserToChannel(Request $request, ChannelService $channelService, Channel $channel, SerializerInterface $serializer)
+    {
+        $data = $request->getContent();
+        /** stdclass */
+        $data = json_decode($data);
+
+        $data2 = $channelService->addUserToChannel($data, $channel);
+    
+        if(!$data2) {
+            return $this->json([], 400);
+        }
+
+        return $this->json([
+            'user' => $serializer->serialize($data2['user'], 'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $serializer->serialize($data2['channel'], 'json', ['groups' => ['public']])
+        ]);
+    }
+
+    /**
+     * @Route("/test/{id}", name="test", methods={"GET"})
+     */
+    public function test(ChannelRepository $channelRepository, SerializerInterface $serializer, Channel $channel, ChannelService $channelService)
+    {
+
+    }
 }

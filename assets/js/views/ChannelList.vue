@@ -14,10 +14,10 @@
                 <tr v-for="channel in channels" :key="channel.id">
                     <td>{{ channel.name }}</td>
                     <td>{{ channel.hasPassword|translateBoolean }}</td>
-                    <td>{{ channel.users|count }}</td>
+                    <td>{{ channel.usersCount }}/{{ channel.usersMax }}</td>
                     <td>
-                        <ButtonLink routeName="channel-view" buttonClass="btn-primary" buttonText="Play"></ButtonLink>
-                        <ButtonLink routeName="channel-connect" buttonClass="btn-primary" buttonText="Watch"></ButtonLink>
+                        <ButtonLink routeName="channel-play" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Play"></ButtonLink>
+                        <ButtonLink routeName="channel-view" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Watch"></ButtonLink>
                     </td>
                 </tr>
             </tbody>
@@ -33,12 +33,9 @@ export default {
     computed: {
         channels: function() {
             return this.$store.getters['channel/channels'];
-        }
+        } 
     },
     filters: {
-        count: function(array) {
-            return array.length;
-        },
         translateBoolean: function(bool) {
             if(bool == false) return 'Non';
             else if(bool == true) return 'Oui';

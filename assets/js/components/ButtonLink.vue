@@ -12,7 +12,7 @@ export default {
         buttonClass: String,
         buttonText: String,
         routeName: String,
-        routeParams: String
+        routeParams: Object
     }
 }
 </script>
