@@ -3,6 +3,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Entity\Channel;
+use App\Entity\Game;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -32,7 +33,8 @@ class ChannelService
             ->setIspublic($data->isPublic)
             ->setPassword($encodedPassword)
             ->addUser($user)
-            ->setUsersMax($data->usersMax);
+            ->setUsersMax($data->usersMax)
+            ->setGame(new Game());
 
         $this->entityManager->persist($channel);
         $this->entityManager->persist($user);

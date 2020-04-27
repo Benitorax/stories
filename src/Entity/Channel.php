@@ -67,6 +67,13 @@ class Channel implements UserInterface
      */
     private $usersCount = 0;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Game", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("private")
+     */
+    private $game;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -219,4 +226,16 @@ class Channel implements UserInterface
     public function getUsername() {}
 
     public function eraseCredentials() {}
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(Game $game): self
+    {
+        $this->game = $game;
+
+        return $this;
+    }
 }

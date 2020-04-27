@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Game;
 use App\Entity\User;
 use App\Entity\Channel;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -72,18 +73,19 @@ class AppFixtures extends Fixture
 
         $user = new User();
         $user
-        ->setId(uniqid())
-        ->setToken(uniqid())
-        ->setUsername($channelData['username']);
+            ->setId(uniqid())
+            ->setToken(uniqid())
+            ->setUsername($channelData['username']);
 
         $channel
-        ->setId(uniqid())
-        ->setName($channelData['name'])
-        ->setHasPassword($channelData['hasPassword'])
-        ->setIspublic($channelData['isPublic'])
-        ->setPassword($encodedPassword)
-        ->addUser($user)
-        ->setUsersMax($channelData['usersMax']);
+            ->setId(uniqid())
+            ->setName($channelData['name'])
+            ->setHasPassword($channelData['hasPassword'])
+            ->setIspublic($channelData['isPublic'])
+            ->setPassword($encodedPassword)
+            ->addUser($user)
+            ->setUsersMax($channelData['usersMax'])
+            ->setGame(new Game());
 
         return [
             'user' => $user,

@@ -21,6 +21,10 @@ export function channel_check_password(data) {
     return axios.post('/api/channel/'+ data.channel.id + '/check-password', {password: data.password});
 }
 
+export function channel_get_by_id(data) {
+    return axios.get('/api/channel/'+ data.id);
+}
+
 //#################################################################
 
 const _products = [

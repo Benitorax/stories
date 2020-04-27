@@ -1,4 +1,6 @@
-import { channel_post, channel_list, channel_add_user, channel_check_password } from '../../api/ajax';
+import { channel_post, channel_list, channel_add_user, 
+    channel_check_password, channel_get_by_id
+} from '../../api/ajax';
 
 // initial state
 const state = {
@@ -56,6 +58,18 @@ const actions = {
     },
     checkPassword({ commit, state }, data) {
         return channel_check_password(data)
+        .then(response => {
+            let user = JSON.parse(response.data.user);
+            let channel = JSON.parse(response.data.channel);
+
+            commit('user/setUser', user, { root: true });
+            commit('setChannel', channel);
+            
+            return { user, channel};
+        });
+    },
+    getChannel({ commit, state }, data) {
+        return channel_get_by_id(data)
         .then(response => {
             let user = JSON.parse(response.data.user);
             let channel = JSON.parse(response.data.channel);

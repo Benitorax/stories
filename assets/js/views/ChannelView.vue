@@ -1,22 +1,17 @@
 <template>
     <div>
         <h2>Channel View</h2>
-        <div v-if="isConnected">
-            <div>Partie: {{ channel.name }}</div>
-        </div>
-        <PasswordForm v-else-if="channel" :channel="channel"></PasswordForm>
+        <GameView v-if="isConnected" :channel="channel"></GameView>
+        <PasswordForm v-else-if="showPasswordForm" :channel="channel"></PasswordForm>
     </div>
 </template>
     
 <script>
 import PasswordForm from '../components/PasswordForm';
+import GameView from '../components/game-view/GameView';
 
 export default {
-    components: { PasswordForm },
-    data() {
-        return {
-        };
-    },
+    components: { PasswordForm, GameView },
     computed: {
         ...Vuex.mapGetters({
             channelById: 'channel/channelById'
@@ -27,9 +22,17 @@ export default {
         },
         isConnected: function() {
             if(this.$store.getters['user/user'].username) return true;
-            if(this.channel && this.channel.hasPassword == false) return true;
+            if(this.channel && this.channel.hasPassword == false) {
+                this.$store.dispatch('channel/getChannel', this.channel)
+                .then(() => {
+                    return true;
+                });  
+            };
             
             return false;
+        },
+        showPasswordForm: function() {
+            return this.channel != undefined && this.channel.hasPassword == true;
         }
     },
     mounted() {

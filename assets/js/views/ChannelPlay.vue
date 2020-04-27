@@ -1,17 +1,17 @@
 <template>
     <div>
         <h2>Channel Play</h2>
-        <Game v-if="isConnected" :channel="channel" :user="user"></Game>
+        <Command v-if="isConnected" :channel="channel" :user="user"></Command>
         <UserForm v-else-if="channel" :channel="channel"></UserForm>
     </div>
 </template>
     
 <script>
 import UserForm from '../components/UserForm';
-import Game from '../components/Game';
+import Command from '../components/command/Command';
 
 export default {
-    components: { UserForm, Game },
+    components: { UserForm, Command },
     data() {
         return {
             

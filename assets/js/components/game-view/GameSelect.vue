@@ -1,6 +1,7 @@
 <template>
     <div>
-        Command: lancé de dé
+        <div>Message select</div>
+        <div>Message select</div>    
     </div>
 </template>
 

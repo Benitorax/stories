@@ -94,6 +94,23 @@ class AppController extends AbstractController
     }
 
     /**
+     * @Route("/api/channel/{id}", name="api_channel", methods={"GET"})
+     */
+    public function getChannel(Request $request, ChannelService $channelService, Channel $channel, SerializerInterface $serializer)
+    {
+        if($channel->getHasPassword()) {
+            return $this->json([], 400);
+        }
+
+        $user = (new User())->setUsername('spectator');
+
+        return $this->json([
+            'user' => $serializer->serialize($user, 'json', ['groups' => ['public']]),
+            'channel' => $serializer->serialize($channel, 'json', ['groups' => ['public', 'private']])
+        ]);
+    }
+
+    /**
      * @Route("/test/{id}", name="test", methods={"GET"})
      */
     public function test(ChannelRepository $channelRepository, SerializerInterface $serializer, Channel $channel, ChannelService $channelService)
