@@ -10,6 +10,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Game
 {
+    const STAGE_WAITING = 'waiting';
+    const STAGE_SELECTING = 'selecting';
+    const STAGE_PROPOSING_SUBJECT = 'proposing subject';
+    const STAGE_PLAYING = 'playing';
+    const STAGE_RATING = 'rating';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -22,7 +28,7 @@ class Game
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("private")
      */
-    private $stage = 'waiting';
+    private $stage = self::STAGE_WAITING;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -31,10 +37,25 @@ class Game
     private $version;
 
     /**
-     * @ORM\Column(type="array", nullable=true)
+     * @ORM\Column(type="array")
      * @Groups("private")
      */
     private $messages = [];
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $rolledDiceCount = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $rolledWhiteDiceCount = 0;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $rolledBlackDiceCount = 0;
 
     public function getId(): ?int
     {
@@ -65,14 +86,74 @@ class Game
         return $this;
     }
 
-    public function getMessages(): ?array
+    public function getMessages(): array
     {
         return $this->messages;
     }
 
-    public function setMessages(?array $messages): self
+    public function setMessages(array $messages): self
     {
         $this->messages = $messages;
+
+        return $this;
+    }
+
+    public function getRolledDiceCount(): ?int
+    {
+        return $this->rolledDiceCount;
+    }
+
+    public function increaseRolledDiceCount(): self
+    {
+        $this->rolledDiceCount++;
+
+        return $this;
+    }
+
+    public function resetGameForWaitingStage(): self
+    {
+        $this->rolledDiceCount = 0;
+        $this->rolledBlackDiceCount = 0;
+        $this->rolledWhiteDiceCount = 0;
+        $this->version = null;
+        $this->stage = self::STAGE_WAITING;
+        $this->messages = [];
+
+        return $this;
+    }
+
+    public function resetGameForSelectingStage(): self
+    {
+        $this->rolledDiceCount = 0;
+        $this->rolledBlackDiceCount = 0;
+        $this->rolledWhiteDiceCount = 0;
+        $this->version = null;
+        $this->stage = self::STAGE_SELECTING;
+        $this->messages = [];
+
+        return $this;
+    }
+
+    public function getRolledWhiteDiceCount(): ?int
+    {
+        return $this->rolledWhiteDiceCount;
+    }
+
+    public function increaseRolledWhiteDiceCount(): self
+    {
+        $this->rolledWhiteDiceCount++;
+
+        return $this;
+    }
+
+    public function getRolledBlackDiceCount(): ?int
+    {
+        return $this->rolledBlackDiceCount;
+    }
+
+    public function increaseRolledBlackDiceCount(): self
+    {
+        $this->rolledBlackDiceCount++;
 
         return $this;
     }

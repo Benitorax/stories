@@ -9,10 +9,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>3</td>
+                <tr v-for="(user, index) in users" :key="index">
+                    <th scope="row">{{ index }}</th>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.points }}</td>
                 </tr>
             </tbody>
         </table>

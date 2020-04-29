@@ -28,7 +28,7 @@
 
 <script>
 import checkUserForm from '../form/checkUserForm';
-
+//TODO check if username already used in the party
 export default {
     data() {
         return {

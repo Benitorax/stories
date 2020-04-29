@@ -14,6 +14,7 @@ class User implements UserInterface
     /**
      * @ORM\Id()
      * @ORM\Column(type="string")
+     * @Groups("public")
      */
     private $id;
 
@@ -30,12 +31,6 @@ class User implements UserInterface
     private $points = 0;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Groups("public")
-     */
-    private $isConnected = true;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Channel", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -46,6 +41,17 @@ class User implements UserInterface
      * @Groups("play")
      */
     private $token;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups("public")
+     */
+    private $vote = null;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isStoryteller = false;
 
     public function getId(): ?string
     {
@@ -87,18 +93,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getIsConnected(): ?bool
-    {
-        return $this->isConnected;
-    }
-
-    public function setIsConnected(bool $isConnected): self
-    {
-        $this->isConnected = $isConnected;
-
-        return $this;
-    }
-
     public function getChannel(): ?Channel
     {
         return $this->channel;
@@ -119,6 +113,30 @@ class User implements UserInterface
     public function setToken(string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function getVote(): ?bool
+    {
+        return $this->vote;
+    }
+
+    public function setVote(?bool $vote): self
+    {
+        $this->vote = $vote;
+
+        return $this;
+    }
+
+    public function getIsStoryteller(): ?bool
+    {
+        return $this->isStoryteller;
+    }
+
+    public function setIsStoryteller(bool $isStoryteller): self
+    {
+        $this->isStoryteller = $isStoryteller;
 
         return $this;
     }

@@ -1,6 +1,11 @@
 <template>
     <div>
-        Command Play
+        <div v-if="isPlaying">
+            <button>Lancer dé</button>
+        </div>
+        <div v-else>
+            <button>Lancé dé noir</button>
+        </div>
     </div>
 </template>
 
@@ -8,7 +13,12 @@
 
 
 export default {
-    
+    props: {
+        isPlaying: Boolean
+    },
+    computed: {
+
+    }
 }
 </script>
 

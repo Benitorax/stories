@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Channel;
 use App\Entity\User;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +49,47 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAudienceTokensByChannel(Channel $channel): ?array
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.token')
+            ->andWhere('u.channel = :channel')
+            ->setParameter('channel', $channel)
+            ->andWhere('u.isConnected = :boolean')
+            ->setParameter('boolean', true)
+            ->andWhere('u.isStoryteller = :boolean2')
+            ->setParameter('boolean2', false)
+            ->getQuery()
+            ->getScalarResult()
+        ;
+    }
+
+    public function findAudienceByChannel(Channel $channel): ?array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.channel = :channel')
+            ->setParameter('channel', $channel)
+            ->andWhere('u.isConnected = :boolean')
+            ->setParameter('boolean', true)
+            ->andWhere('u.isStoryteller = :boolean2')
+            ->setParameter('boolean2', false)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findStorytellerByChannel(Channel $channel): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.channel = :channel')
+            ->setParameter('channel', $channel)
+            ->andWhere('u.isStoryteller = :boolean')
+            ->setParameter('boolean', true)
+            ->andWhere('u.isConnected = :boolean2')
+            ->setParameter('boolean2', true)
+            ->getQuery()
+            ->getSingleResult()
+        ;    
+    }
 }
