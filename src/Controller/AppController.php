@@ -83,20 +83,18 @@ class AppController extends AbstractController
 
         $data2 = $channelService->addUserToChannel($data, $channel);
     
-        if(!$data2) {
-            return $this->json([], 400);
-        }
+        if(is_string($data2)) return $this->json(['error' => $data2], 400);
 
         return $this->json([
             'user' => $serializer->serialize($data2['user'], 'json', ['groups' => ['public', 'private', 'play']]),
-            'channel' => $serializer->serialize($data2['channel'], 'json', ['groups' => ['public']])
+            'channel' => $serializer->serialize($data2['channel'], 'json', ['groups' => ['public', 'private']])
         ]);
     }
 
     /**
      * @Route("/api/channel/{id}", name="api_channel", methods={"GET"})
      */
-    public function getChannel(Request $request, ChannelService $channelService, Channel $channel, SerializerInterface $serializer)
+    public function getPublicChannelWithoutPassword(Channel $channel, SerializerInterface $serializer)
     {
         if($channel->getHasPassword()) {
             return $this->json([], 400);

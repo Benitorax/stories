@@ -50,8 +50,21 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("private")
      */
     private $isStoryteller = false;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups("public")
+     */
+    private $isConnected = true;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups("private")
+     */
+    private $isReady = false;
 
     public function getId(): ?string
     {
@@ -137,6 +150,30 @@ class User implements UserInterface
     public function setIsStoryteller(bool $isStoryteller): self
     {
         $this->isStoryteller = $isStoryteller;
+
+        return $this;
+    }
+
+    public function getIsConnected(): ?bool
+    {
+        return $this->isConnected;
+    }
+
+    public function setIsConnected(bool $isConnected): self
+    {
+        $this->isConnected = $isConnected;
+
+        return $this;
+    }
+
+    public function getIsReady(): ?bool
+    {
+        return $this->isReady;
+    }
+
+    public function setIsReady(bool $isReady): self
+    {
+        $this->isReady = $isReady;
 
         return $this;
     }

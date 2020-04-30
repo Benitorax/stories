@@ -9,18 +9,40 @@ use App\Service\StoriesService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class StoriesController extends AbstractController
 {
     private $channelRepository;
     private $userRepository;
+    private $serializer;
 
-    public function __construct(ChannelRepository $channelRepository, UserRepository $userRepository)
+    public function __construct(ChannelRepository $channelRepository, UserRepository $userRepository, SerializerInterface $serializer)
     {
         $this->channelRepository = $channelRepository;
         $this->userRepository = $userRepository;
+        $this->serializer = $serializer;
     }
     
+    /**
+     * @Route("/api/channel/{id}/ready", name="stories_ready", methods={"POST"})
+     */
+    public function readyToPlay(Request $request, Channel $channel, StoriesService $storiesService)
+    {
+        /** stdclass */
+        $data = $this->getDecodedJsonDataFromRequest($request);
+
+        $user = $this->getUserFromChannel($data->token, $channel);
+        if(!$user) return $this->json([], 403);
+
+        $storiesService->setUserReady($user);
+        
+        return $this->json([
+            'user' => $this->serializer->serialize($user,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
+        ]);
+    }
+
     /**
      * @Route("/api/channel/{id}/dice/number", name="stories_roll_number_dice", methods={"POST"})
      */
@@ -35,7 +57,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->rollNumberDice($channel);
         
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -53,7 +76,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->rateStoryteller($storyteller, $channel);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -67,10 +91,11 @@ class StoriesController extends AbstractController
         $storyteller = $this->getStoryteller($data->token, $channel);
         if(!$storyteller) return $this->json([], 403);
 
-        $channel = $storiesService->setGameVersion($channel, $data->version);
+        $channel = $storiesService->setGameVersion($channel, $storyteller, $data->version);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -87,7 +112,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->rollNormalDice($channel, $storyteller);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -104,7 +130,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->rollWhitelDice($channel, $storyteller);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -121,7 +148,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->rollBlackDice($channel, $user);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($storyteller,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -138,7 +166,8 @@ class StoriesController extends AbstractController
         $channel = $storiesService->vote($user, $data->vote);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($user,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -152,10 +181,11 @@ class StoriesController extends AbstractController
         $user = $this->getUserFromChannel($data->token, $channel);
         if(!$user) return $this->json([], 403);
 
-        $channel = $storiesService->proposeSubject($channel, $user);
+        $channel = $storiesService->proposeSubject($channel, $user, $data->subject);
 
         return $this->json([
-            'channel' => $channel
+            'user' => $this->serializer->serialize($user,  'json', ['groups' => ['public', 'private', 'play']]),
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 
@@ -169,7 +199,7 @@ class StoriesController extends AbstractController
         $channel = $storiesService->resolveVote($channel);
 
         return $this->json([
-            'channel' => $channel
+            'channel' => $this->serializer->serialize($channel,  'json', ['groups' => ['public', 'private']])
         ]);
     }
 

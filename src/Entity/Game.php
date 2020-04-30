@@ -44,16 +44,19 @@ class Game
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("private")
      */
     private $rolledDiceCount = 0;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("private")
      */
     private $rolledWhiteDiceCount = 0;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("private")
      */
     private $rolledBlackDiceCount = 0;
 

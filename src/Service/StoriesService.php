@@ -12,8 +12,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class StoriesService
 {
-    const NORMAL_VERSION = 'normal';
-    const WHITE_DICE_VERSION = 'white dice';
+    const NORMAL_VERSION = 1;
+    const WHITE_DICE_VERSION = 2;
 
     private $entityManager;
     private $storyteller;
@@ -28,11 +28,27 @@ class StoriesService
         $this->subjectData = $subjectData;
     }
 
-    public function setGameVersion(Channel $channel, string $version)
+    public function setUserReady(User $user)
+    {
+        $user->setIsReady(true);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    public function setGameVersion(Channel $channel, User $user, string $version)
     {
         $game = $channel->getGame();
-        $game->setVersion($version);
+        $availableVersions = [self::NORMAL_VERSION, self::WHITE_DICE_VERSION];
+
+        if(in_array($version, $availableVersions)) $game->setVersion($version);
+        else {
+            $version = array_rand($availableVersions, 1);
+            $game->setVersion($version);
+        }
+        
         $this->entityManager->flush();
+        $this->setNewMessageInsideGame($user, 'Vous avez sélectionné la version '.$version, $game);
 
         return $channel;
     }
@@ -79,11 +95,10 @@ class StoriesService
         return $channel;
     }
 
-    public function proposeSubject(Channel $channel, User $user)
+    public function proposeSubject(Channel $channel, User $user, string $subject)
     {
         $game = $channel->getGame();
-        $message = $this->subjectData->getOneSubject();
-        $this->setNewMessageInsideGame($user, $message, $game);
+        $this->setNewMessageInsideGame($user, 'Sujet : '.$subject, $game);
 
         return $channel;
     }

@@ -1,3 +1,7 @@
+export function ready_to_play(data) {
+    return axios.post('/api/channel/'+ data.channel.id +'/ready', data);
+}
+
 export function roll_number_dice(data) {
     return axios.post('/api/channel/'+ data.channel.id +'/dice/number', data);
 }
@@ -16,6 +20,10 @@ export function roll_white_dice(data) {
 
 export function roll_black_dice(data) {
     return axios.post('/api/channel/'+ data.channel.id +'/dice/black', data);
+}
+
+export function roll_dice_for_rating(data) {
+    return axios.post('/api/channel/'+ data.channel.id +'/dice/rating', data);
 }
 
 export function vote_for_allowing_second_roll(data) {

@@ -8,6 +8,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/*
+public: visible from everyone
+private: visible from persons who have access
+play: accessible by the owner (example: token)
+*/
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ChannelRepository")
  */

@@ -61,9 +61,13 @@ export default {
                     }
                     this.disabled = 0;
                 })                
-                .catch((data) => {
-                    console.log('promise error inside userForm', data);
-                    this.$store.commit('message/setMessage', { type: 'danger', text: 'Mot de passe incorrect' });
+                .catch(error => {
+                    console.log('promise error inside userForm', error.response.data);
+                     if (error.response.data.error) {
+                        this.$store.commit('message/setMessage', { type: 'danger', text: error.response.data.error });
+                        } else {
+                        this.$store.commit('message/setMessage', { type: 'danger', text: 'Erreur inconnue' });
+                    }
                     this.disabled = 0;
                 });
             }

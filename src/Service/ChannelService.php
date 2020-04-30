@@ -46,30 +46,40 @@ class ChannelService
         ];
     }
 
-    public function addUserTochannel($data, Channel $channel): array
+    public function addUserTochannel($data, Channel $channel)
     {
         if($channel->getHasPassword()) {
             $isValid = $this->passwordEncoder->isPasswordValid($channel, $data->password);
-            if(!$isValid) return false;
+            if(!$isValid) return 'Mauvais mot de passe';
         }
-        
+
+        $users = $channel->getUsers();
+        foreach($users as $user) {
+            if($user->getUsername() == $data->username) {
+                if($user->getIsConnected()) return 'Nom déjà utilisé';
+                
+                else {
+                    $user->setIsConnected(true);
+                    $this->entityManager->flush();
+                    return ['user' => $user, 'channel' => $channel];
+                }
+            }
+        }
+
         $user = $this->createUser($data->username);        
         $channel->addUser($user);
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return [
-            'user' => $user,
-            'channel' => $channel
-        ];
+        return ['user' => $user, 'channel' => $channel];
     }
 
-    public function checkPassword(string $password, Channel $channel)
+    public function checkPassword(string $password, Channel $channel): ?User
     {
         if($channel->getHasPassword()) {
             $isValid = $this->passwordEncoder->isPasswordValid($channel, $password);
-            if(!$isValid) return false;
+            if(!$isValid) return null;
         }
         
         $user = $this->createUser('spectator');        
@@ -77,7 +87,7 @@ class ChannelService
         return $user;
     }
 
-    private function createUser(string $username): UserInterface
+    private function createUser(string $username): User
     {
         $user = new User();
         return $user
