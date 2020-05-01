@@ -7,7 +7,7 @@ export function readyToPlay(data) {
     return ready_to_play(data).then(response => {
         let user = JSON.parse(response.data.user);
         let channel = JSON.parse(response.data.channel);
-
+        console.log('aaa', user, channel);
         return {user, channel};
     });
 }

@@ -4,6 +4,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Entity\Channel;
 use App\Entity\Game;
+use App\Repository\ChannelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -12,16 +13,22 @@ class ChannelService
 {
     private $entityManager;
     private $passwordEncoder;
+    private $channelRepository;
 
     // need to try with PasswordEncoderInterface
-    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder, ChannelRepository $channelRepository)
     {
         $this->entityManager = $entityManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->channelRepository = $channelRepository;
     }
 
-    public function createChannel($data): array
+    public function createChannel($data)
     {
+        $names = $this->channelRepository->findAllNames();
+        foreach($names as $name) {
+            if(strtolower($name['name']) == strtolower($data->name)) return 'Nom de partie déjà utilisé';
+        }
         $channel = new Channel();
         $encodedPassword = $this->passwordEncoder->encodePassword($channel, $data->password);
 
@@ -55,11 +62,12 @@ class ChannelService
 
         $users = $channel->getUsers();
         foreach($users as $user) {
-            if($user->getUsername() == $data->username) {
+            if(strtolower($user->getUsername()) == strtolower($data->username)) {
                 if($user->getIsConnected()) return 'Nom déjà utilisé';
                 
                 else {
                     $user->setIsConnected(true);
+                    $channel->increaseUsersCount();
                     $this->entityManager->flush();
                     return ['user' => $user, 'channel' => $channel];
                 }
@@ -95,4 +103,24 @@ class ChannelService
             ->setToken(uniqid())
             ->setUsername($username);
     } 
+
+    public function disconnectUser(string $token, Channel $channel)
+    {
+        $users = $channel->getUsers();
+        $connectedCount = 0;
+        foreach($users as $user) {
+            if($user->getToken() == $token) {
+                $user->setIsConnected(false);
+                $channel->decreaseUsersCount();
+            }
+            if($user->getIsConnected() == true) $connectedCount++;
+        }
+        if($connectedCount == 0) {
+            foreach($users as $user) $this->entityManager->remove($user);
+            $this->entityManager->remove($channel);
+        }
+        $this->entityManager->flush();
+
+        return $channel;
+    }
 }

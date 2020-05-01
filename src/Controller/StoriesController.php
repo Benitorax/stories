@@ -25,7 +25,7 @@ class StoriesController extends AbstractController
     }
     
     /**
-     * @Route("/api/channel/{id}/ready", name="stories_ready", methods={"POST"})
+     * @Route("/api/channel/{id}/user/ready", name="stories_ready", methods={"POST"})
      */
     public function readyToPlay(Request $request, Channel $channel, StoriesService $storiesService)
     {

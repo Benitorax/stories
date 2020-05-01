@@ -39,17 +39,20 @@ class TestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $channel = $this->channelRepository->findOneBy(['id' => '5ea89e8446431']);
+        $channels = $this->channelRepository->findAllNames();
+
         // $data = $this->userRepository->findStorytellerTokenByChannel($channel);
         // $data = $this->userRepository->findStorytellerByChannel('5ea89e8446431');
         // $tokenArray = $this->userRepository->findAudienceTokensByChannelId('5ea89e8446431');
-        $data = $this->userRepository->findStorytellerTokenByChannel($channel);
+        // $data = $this->userRepository->findStorytellerTokenByChannel($channel);
         // foreach($tokenArray as $token) {
         //     dump($token['token']);
         // }
         //$this->doingThingsApart($channel);
-        dump($data);
-
+        dump($channels);
+        foreach($channels as $channel) {
+            dump($channel['name']);
+        }
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
 

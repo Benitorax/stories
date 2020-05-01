@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Channel;
 use App\Entity\User;
+use App\Entity\Channel;
 use App\Service\ChannelService;
+use App\Repository\UserRepository;
 use App\Repository\ChannelRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,10 +45,11 @@ class AppController extends AbstractController
         $data = json_decode($data);
 
         $data = $channelService->createChannel($data);
-
+        if(is_string($data)) return $this->json(['error' => $data], 400);
+        
         return $this->json([
             'user' => $serializer->serialize($data['user'], 'json', ['groups' => ['public', 'private', 'play']]),
-            'channel' => $serializer->serialize($data['channel'], 'json', ['groups' => ['public']]),
+            'channel' => $serializer->serialize($data['channel'], 'json', ['groups' => ['public', 'private']]),
         ]);
     }
 
@@ -104,6 +106,25 @@ class AppController extends AbstractController
 
         return $this->json([
             'user' => $serializer->serialize($user, 'json', ['groups' => ['public']]),
+            'channel' => $serializer->serialize($channel, 'json', ['groups' => ['public', 'private']])
+        ]);
+    }
+
+    /**
+     * @Route("/api/channel/{id}/user/disconnect", name="api_channel_user_disconnect", methods={"POST"})
+     */
+    public function disconnectUser(Request $request, ChannelService $channelService, Channel $channel, UserRepository $userRepository, SerializerInterface $serializer)
+    {
+        $data = $request->getContent();
+        /** stdclass */
+        $data = json_decode($data);
+
+        if(!$data->token) return $this->json(['error' => 'token introuvable'], 400);
+
+        $channel = $channelService->disconnectUser($data->token, $channel);
+
+        return $this->json([
+            'user' => null,
             'channel' => $serializer->serialize($channel, 'json', ['groups' => ['public', 'private']])
         ]);
     }

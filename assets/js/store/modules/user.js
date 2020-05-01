@@ -1,4 +1,4 @@
-import ajax from '../../api/ajax'
+import { disconnect_user } from '../../api/ajax';
 
 // initial state
 const state = {
@@ -14,6 +14,11 @@ const getters = {
 
 // actions
 const actions = {
+	disconnectUser({ commit, state }, data) {
+		disconnect_user(data).then(response => {
+			commit('eraseUser');
+		});
+	}
 };
 
 // mutations

@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Entity\Channel;
 use App\Manager\SubjectData;
 use App\Manager\AudienceDice;
-use App\Manager\StoryTellerDice;
+use App\Manager\StorytellerDice;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,14 +17,14 @@ class StoriesService
 
     private $entityManager;
     private $storyteller;
-    private $audienceDice;
+    private $audience;
     private $subjectData;
 
-    public function __construct(EntityManagerInterface $entityManager, StoryTellerDice $storyteller, AudienceDice $audienceDice, SubjectData $subjectData)
+    public function __construct(EntityManagerInterface $entityManager, StorytellerDice $storyteller, AudienceDice $audience, SubjectData $subjectData)
     {
         $this->entityManager = $entityManager;
         $this->storyteller = $storyteller;
-        $this->audienceDice = $audienceDice;
+        $this->audience = $audience;
         $this->subjectData = $subjectData;
     }
 
@@ -89,7 +89,7 @@ class StoriesService
     public function rollBlackDice(Channel $channel, User $user)
     {
         $game = $channel->getGame();
-        $message = $this->audienceDice->getOneSentence();
+        $message = $this->audience->getOneSentence();
         $this->setNewMessageInsideGame($user, $message, $game);
 
         return $channel;

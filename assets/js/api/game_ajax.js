@@ -1,5 +1,5 @@
 export function ready_to_play(data) {
-    return axios.post('/api/channel/'+ data.channel.id +'/ready', data);
+    return axios.post('/api/channel/'+ data.channel.id +'/user/ready', data);
 }
 
 export function roll_number_dice(data) {

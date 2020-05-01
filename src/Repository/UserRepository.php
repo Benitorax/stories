@@ -92,4 +92,14 @@ class UserRepository extends ServiceEntityRepository
             ->getSingleResult()
         ;    
     }
+
+    public function findUserByToken($token): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.token = :token')
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getSingleResult()
+        ;
+    }
 }

@@ -181,7 +181,7 @@ class Channel implements UserInterface
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
-            $this->increaseCount();
+            $this->increaseUsersCount();
             $user->setChannel($this);
         }
 
@@ -192,7 +192,7 @@ class Channel implements UserInterface
     {
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
-            $this->decreaseCount();
+            $this->decreaseUsersCount();
             // set the owning side to null (unless already changed)
             if ($user->getChannel() === $this) {
                 $user->setChannel(null);
@@ -207,7 +207,7 @@ class Channel implements UserInterface
         return $this->usersCount;
     }
 
-    public function increaseCount(): self
+    public function increaseUsersCount(): self
     {
         $this->usersCount++;
         if($this->usersCount < 0) $this->usersCount = 0;
@@ -216,7 +216,7 @@ class Channel implements UserInterface
         return $this;
     }
 
-    public function decreaseCount(): self
+    public function decreaseUsersCount(): self
     {
         $this->usersCount--;
         if($this->usersCount < 0) $this->usersCount = 0;

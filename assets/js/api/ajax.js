@@ -13,6 +13,10 @@ export function channel_post(data) {
     return axios.post('/api/channel', data);
 }
 
+export function disconnect_user(data) {
+    return axios.post('/api/channel/'+ data.channel.id + '/user/disconnect', data)
+}
+
 export function channel_add_user(data) {
     return axios.post('/api/channel/'+ data.channel.id + '/user', data);
 }

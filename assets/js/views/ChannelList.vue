@@ -16,8 +16,10 @@
                     <td>{{ channel.hasPassword|translateBoolean }}</td>
                     <td>{{ channel.usersCount }}/{{ channel.usersMax }}</td>
                     <td>
-                        <ButtonLink routeName="channel-play" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Play"></ButtonLink>
-                        <ButtonLink routeName="channel-view" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Watch"></ButtonLink>
+                        <!-- <ButtonLink v-on:click="onClickPlay(channel.id)" routeName="channel-play" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Play"></ButtonLink>
+                        <ButtonLink routeName="channel-view" :routeParams="{ id: channel.id }" buttonClass="btn-primary" buttonText="Watch"></ButtonLink> -->
+                        <a routeName="channel-play" :routeParams="{ id: channel.id }"><button v-on:click="onClickPlay(channel.id)" class="btn btn-primary">Jouer</button></a>
+                        <a routeName="channel-view" :routeParams="{ id: channel.id }"><button v-on:click="onClickView(channel.id)" class="btn btn-primary">Regarder</button></a>
                     </td>
                 </tr>
             </tbody>
@@ -45,6 +47,18 @@ export default {
             if (!value) return '';
             value = value.toString();
             return value.charAt(0).toUpperCase() + value.slice(1);
+        }
+    },
+    methods: {
+        onClickPlay(id) {
+            let channel = this.channels.find(channel => { return channel.id == id });
+            this.$store.commit('channel/setChannel', channel);
+            this.$router.push({ name: 'channel-play', params: {id: channel.id} });
+        },
+        onClickView(id) {
+            let channel = this.channels.find(channel => { return channel.id == id });
+            this.$store.commit('channel/setChannel', channel);
+            this.$router.push({ name: 'channel-view', params: {id: channel.id} });
         }
     },
     beforeCreate() {

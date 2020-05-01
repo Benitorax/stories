@@ -1,7 +1,7 @@
 <?php
 namespace App\Manager;
 
-class StoryTellerDice
+class StorytellerDice
 {
     const YELLOW_DICE = [
         "Je dois vous avouer",

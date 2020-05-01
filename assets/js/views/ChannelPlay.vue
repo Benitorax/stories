@@ -24,9 +24,8 @@ export default {
         user: function() {
             return this.$store.getters['user/user'];
         },
-        channel: function() {
-            let channel = this.channelById(this.$route.params.id);
-            return channel;
+        channel: function() {          
+            return this.$store.getters['channel/channel'];
         },
         isConnected: function() {
             if(this.$store.getters['user/user'].username) return true;
@@ -34,14 +33,23 @@ export default {
             return false;
         }
     },
-    mounted() {
-        if(!this.channel) {
-            this.$store.dispatch('channel/fetchChannels');
+    created() {
+        if(this.channel.name == undefined) {
+            this.$router.push({ name: 'home'});
         }
+        window.addEventListener('beforeunload', this.removeUser);
     },
     beforeDestroy() {
-        this.$store.commit('user/eraseUser');
+        // add the same process for closing window/tab in created lifecycle
+        this.removeUser();
         this.$store.commit('channel/eraseChannel');
+    },
+    methods: {
+        removeUser() {
+            if(this.user.token) {
+                this.$store.dispatch('user/disconnectUser', {channel: this.channel, token: this.user.token});
+            }
+        }
     }
 }
 </script>

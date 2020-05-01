@@ -63,9 +63,9 @@ export default {
                 })                
                 .catch(error => {
                     console.log('promise error inside userForm', error.response.data);
-                     if (error.response.data.error) {
+                    if (error.response.data.error) {
                         this.$store.commit('message/setMessage', { type: 'danger', text: error.response.data.error });
-                        } else {
+                    } else {
                         this.$store.commit('message/setMessage', { type: 'danger', text: 'Erreur inconnue' });
                     }
                     this.disabled = 0;

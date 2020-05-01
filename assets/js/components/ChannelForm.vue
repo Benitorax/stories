@@ -103,9 +103,13 @@ export default {
                 
                     this.disabled = 0;
                 })                
-                .catch((data) => {
-                    console.log('promise error inside channelForm', data);
-                    this.$store.commit('message/setMessage', { type: 'danger', text: 'Server problem. Please, retry later.' });
+                .catch((error) => {
+                    console.log('promise error inside channelForm', error.response);
+                    if (error.response.data.error) {
+                        this.$store.commit('message/setMessage', { type: 'danger', text: error.response.data.error });
+                    } else {
+                        this.$store.commit('message/setMessage', { type: 'danger', text: 'Erreur inconnue' });
+                    }
                     this.disabled = 0;
                 });
             };

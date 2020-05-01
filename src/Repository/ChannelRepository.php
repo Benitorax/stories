@@ -58,4 +58,13 @@ class ChannelRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findAllNames()
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.name')
+            ->getQuery()
+            ->getScalarResult()
+        ;
+    }
 }
