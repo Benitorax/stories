@@ -40,7 +40,6 @@ export default {
         window.addEventListener('beforeunload', this.removeUser);
     },
     beforeDestroy() {
-        // add the same process for closing window/tab in created lifecycle
         this.removeUser();
         this.$store.commit('channel/eraseChannel');
     },

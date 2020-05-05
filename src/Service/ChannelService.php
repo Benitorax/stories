@@ -6,7 +6,6 @@ use App\Entity\Channel;
 use App\Entity\Game;
 use App\Repository\ChannelRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class ChannelService
@@ -109,7 +108,7 @@ class ChannelService
         $users = $channel->getUsers();
         $connectedCount = 0;
         foreach($users as $user) {
-            if($user->getToken() == $token) {
+            if($user->getToken() == $token && $user->getIsConnected() == true) {
                 $user->setIsConnected(false);
                 $channel->decreaseUsersCount();
             }

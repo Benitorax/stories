@@ -59,9 +59,6 @@ export default {
                 this.className = 'btn-primary';
             });
         }
-    },
-    created() {
-        window.addEventListener('beforeunload', this.removeUser)
     }
 }
 </script>
